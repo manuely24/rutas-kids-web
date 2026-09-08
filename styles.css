@@ -1,0 +1,338 @@
+/* =========================================================
+   Rutas Seguras Kids - styles.css
+   Colores relacionados con transporte escolar y seguridad:
+   amarillo (bus escolar) y azul (seguridad)
+   ========================================================= */
+
+:root {
+  --amarillo-bus: #FDBA31;
+  --azul-seguridad: #1565C0;
+  --azul-oscuro: #0D3B66;
+  --verde-exito: #2E7D32;
+  --rojo-error: #C62828;
+  --gris-claro: #F5F5F5;
+  --gris-borde: #DDDDDD;
+  --crema-fondo: #FFF8EC;
+  --borde-calido: #E8DFCE;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Trebuchet MS', Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--crema-fondo);
+  color: #222;
+}
+
+/* ===== Encabezado ===== */
+
+.encabezado {
+  background-color: var(--azul-seguridad);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 6px solid var(--amarillo-bus);
+}
+
+.encabezado h1 {
+  margin: 0 0 8px 0;
+}
+
+.fecha-actual {
+  margin: 6px 0 0 0;
+  font-size: 0.85rem;
+  opacity: 0.85;
+  font-style: italic;
+}
+
+/* ===== Contenido principal ===== */
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.seccion-formulario,
+.seccion-rutas {
+  background-color: white;
+  border: 1px solid var(--borde-calido);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* ===== Formulario de rutas ===== */
+
+form label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+form input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid var(--gris-borde);
+  border-radius: 6px;
+  font-family: inherit;
+}
+
+form input:focus {
+  outline: none;
+  border-color: var(--azul-seguridad);
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.15);
+}
+
+.botones-formulario {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  background-color: var(--amarillo-bus);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: inherit;
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+button:hover {
+  opacity: 0.85;
+  transform: scale(1.03);
+}
+
+#boton-cancelar-edicion {
+  background-color: var(--gris-borde);
+}
+
+#boton-restablecer {
+  background-color: var(--azul-oscuro);
+  color: white;
+}
+
+/* ===== Mensajes de error y éxito ===== */
+
+.mensaje-error {
+  color: var(--rojo-error);
+  font-weight: bold;
+  min-height: 20px;
+}
+
+.mensaje-exito {
+  background-color: #E8F5E9;
+  color: var(--verde-exito);
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.oculto {
+  display: none;
+}
+
+/* ===== Sección de rutas existentes ===== */
+
+.encabezado-rutas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.resumen {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.pastilla-resumen {
+  background-color: #E3F2FD;
+  color: var(--azul-oscuro);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.buscador {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 12px;
+  border: 1px solid var(--gris-borde);
+  border-radius: 20px;
+  font-family: inherit;
+}
+
+.buscador:focus {
+  outline: none;
+  border-color: var(--azul-seguridad);
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.15);
+}
+
+#mensaje-sin-resultados {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  margin-top: 16px;
+}
+
+.contenedor-rutas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+footer {
+  text-align: center;
+  padding: 16px;
+  color: #666;
+}
+
+/* =========================================================
+   Diseño adaptable (responsive)
+   ========================================================= */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .contenedor-rutas {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+/* Celular */
+@media (max-width: 600px) {
+  main {
+    padding: 12px;
+  }
+
+  .contenedor-rutas {
+    grid-template-columns: 1fr;
+  }
+
+  .botones-formulario {
+    flex-direction: column;
+  }
+
+  .botones-formulario button {
+    width: 100%;
+  }
+
+  .encabezado-rutas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Celulares pequeños */
+@media (max-width: 400px) {
+  .encabezado h1 {
+    font-size: 1.3rem;
+  }
+
+  form input,
+  button {
+    font-size: 0.9rem;
+  }
+}
+
+/* =========================================================
+   Adiccion Quiz
+   Todo lo nuevo para el filtro de estudiantes por ruta
+   ========================================================= */
+
+:root {
+  --naranja-centro: #FB8C00;
+}
+
+.seccion-estudiantes {
+  background-color: white;
+  border: 1px solid var(--borde-calido);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.seccion-estudiantes label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.selector-ruta {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  padding: 8px 10px;
+  border: 1px solid var(--gris-borde);
+  border-radius: 8px;
+  font-family: inherit;
+  background-color: white;
+}
+
+.selector-ruta:focus {
+  outline: none;
+  border-color: var(--azul-seguridad);
+  box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.15);
+}
+
+.lista-estudiantes-filtrados {
+  list-style: none;
+  padding: 0;
+  margin-top: 14px;
+}
+
+.item-estudiante-filtrado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--gris-borde);
+}
+
+.etiqueta-ruta {
+  color: white;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.etiqueta-ruta-norte {
+  background-color: var(--azul-seguridad);
+}
+
+.etiqueta-ruta-sur {
+  background-color: var(--verde-exito);
+}
+
+.etiqueta-ruta-centro {
+  background-color: var(--naranja-centro);
+}
+
+.etiqueta-ruta-otra {
+  background-color: #777;
+}
+
+@media (max-width: 600px) {
+  .item-estudiante-filtrado {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rutas Seguras Kids</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚌</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="encabezado">
+    <h1>🚌 Rutas Seguras Kids</h1>
+    <p>Un pequeño sistema para organizar las rutas del bus escolar y saber qué niños va en cada una.</p>
+    <p id="fecha-actual" class="fecha-actual"></p>
+  </header>
+
+  <main>
+
+    <!-- Sección para crear o editar una ruta -->
+    <section class="seccion-formulario" id="seccion-crear-ruta">
+      <h2 id="titulo-formulario">Crear nueva ruta</h2>
+
+      <form id="formulario-ruta">
+        <label for="input-nombre-ruta"> Nombre de la ruta</label>
+        <input type="text" id="input-nombre-ruta" placeholder="Ej: Ruta Norte">
+
+        <label for="input-conductor"> Nombre del conductor</label>
+        <input type="text" id="input-conductor" placeholder="Ej: Carlos Gómez">
+
+        <label for="input-hora"> Hora de salida</label>
+        <input type="text" id="input-hora" placeholder="Ej: 6:30 AM">
+
+        <label for="input-ciudad"> Ciudad</label>
+        <input type="text" id="input-ciudad" placeholder="Ej: Bucaramanga">
+
+        <p id="mensaje-error-formulario" class="mensaje-error"></p>
+
+        <div class="botones-formulario">
+          <button type="submit" id="boton-guardar-ruta">Guardar ruta</button>
+          <button type="button" id="boton-cancelar-edicion" class="oculto">Cancelar edición</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Sección donde se muestran las rutas existentes -->
+    <section class="seccion-rutas">
+      <div class="encabezado-rutas">
+        <h2>🗺️ Rutas existentes</h2>
+        <button id="boton-restablecer">🔄 Restablecer datos de ejemplo</button>
+      </div>
+
+      <!-- Resumen sencillo con el total de rutas y estudiantes -->
+      <div class="resumen">
+        <span id="resumen-rutas" class="pastilla-resumen"></span>
+        <span id="resumen-estudiantes" class="pastilla-resumen"></span>
+      </div>
+
+      <!-- Buscador para filtrar rutas por nombre o ciudad -->
+      <input
+        type="text"
+        id="input-buscador"
+        class="buscador"
+        placeholder="🔍 Buscar ruta por nombre o ciudad..."
+      >
+
+      <p id="mensaje-notificacion" class="mensaje-exito oculto"></p>
+
+      <div id="contenedor-rutas" class="contenedor-rutas">
+        <!-- Aquí se insertan dinámicamente las tarjetas <route-card> -->
+      </div>
+
+      <p id="mensaje-sin-resultados" class="texto-vacio oculto">No encontré ninguna ruta con ese nombre o ciudad 🤔</p>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- Adiccion Quiz: filtro de estudiantes por ruta            -->
+    <!-- ===================================================== -->
+    <section class="seccion-estudiantes" id="seccion-estudiantes">
+      <h2>👦👧 Estudiantes por ruta</h2>
+
+      <label for="select-filtro-ruta">Filtrar por ruta</label>
+      <select id="select-filtro-ruta" class="selector-ruta">
+        <option value="todas">Todas</option>
+        <option value="Ruta Norte">Ruta Norte</option>
+        <option value="Ruta Sur">Ruta Sur</option>
+        <option value="Ruta Centro">Ruta Centro</option>
+      </select>
+
+      <ul id="lista-estudiantes-filtrados" class="lista-estudiantes-filtrados"></ul>
+
+      <p id="mensaje-sin-estudiantes" class="texto-vacio oculto">No hay estudiantes en esta ruta todavía</p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Hecho a Pura Cabeza por <strong>Megamente Y Lopera</strong> - Proyecto académico de desarrollo web</p>
+  </footer>
+
+  <!-- ===================================================== -->
+  <!-- Plantilla del Web Component <route-card>                -->
+  <!-- Cada ruta se dibuja usando esta plantilla dentro de un  -->
+  <!-- Shadow DOM, para que su estilo no choque con el resto.  -->
+  <!-- ===================================================== -->
+  <template id="plantilla-route-card">
+    <style>
+      :host {
+        display: block;
+      }
+
+      .tarjeta {
+        background-color: #FFFDF8;
+        border: 1px solid #e6ddcf;
+        border-top: 5px solid #1565C0;
+        border-radius: 10px;
+        padding: 14px;
+        font-family: 'Trebuchet MS', Verdana, sans-serif;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .tarjeta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+      }
+
+      .tarjeta-encabezado {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tarjeta-encabezado h3 {
+        margin: 0;
+        color: #0D3B66;
+      }
+
+      .contador-estudiantes {
+        background-color: #FDBA31;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+
+      .clima {
+        font-style: italic;
+        color: #1565C0;
+      }
+
+      .botones-ruta {
+        display: flex;
+        gap: 8px;
+        margin: 10px 0;
+      }
+
+      button {
+        cursor: pointer;
+        border: none;
+        border-radius: 20px;
+        padding: 7px 14px;
+        font-weight: bold;
+        font-family: inherit;
+        transition: transform 0.1s ease, opacity 0.1s ease;
+      }
+
+      button:hover {
+        transform: scale(1.03);
+        opacity: 0.9;
+      }
+
+      .boton-editar-ruta {
+        background-color: #FDBA31;
+      }
+
+      .boton-eliminar-ruta {
+        background-color: #C62828;
+        color: white;
+      }
+
+      .lista-estudiantes {
+        list-style: none;
+        padding: 0;
+      }
+
+      .estudiante {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding: 6px 0;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .texto-vacio {
+        color: #777;
+        font-style: italic;
+      }
+
+      .botones-estudiante {
+        display: flex;
+        gap: 6px;
+      }
+
+      .boton-editar-estudiante {
+        background-color: #E3F2FD;
+      }
+
+      .boton-eliminar-estudiante {
+        background-color: #FFEBEE;
+      }
+
+      .formulario-estudiante {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .formulario-estudiante input {
+        padding: 7px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-family: inherit;
+      }
+
+      .mensaje-error-estudiante {
+        color: #C62828;
+        font-size: 0.85rem;
+        min-height: 16px;
+      }
+
+      /* Breakpoints propios del componente */
+      @media (max-width: 600px) {
+        .tarjeta-encabezado {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .botones-ruta {
+          flex-direction: column;
+        }
+
+        .estudiante {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+
+    <div class="tarjeta">
+      <div class="tarjeta-encabezado">
+        <h3 class="nombre-ruta"></h3>
+        <span class="contador-estudiantes"></span>
+      </div>
+
+      <p><strong>Conductor:</strong> <span class="conductor"></span></p>
+      <p><strong>Hora de salida:</strong> <span class="hora"></span></p>
+      <p><strong>Ciudad:</strong> <span class="ciudad"></span></p>
+      <p class="clima">Consultando clima...</p>
+
+      <div class="botones-ruta">
+        <button class="boton-editar-ruta">✏️ Editar ruta</button>
+        <button class="boton-eliminar-ruta">🗑️ Eliminar ruta</button>
+      </div>
+
+      <hr>
+
+      <h4>🎒 Estudiantes</h4>
+      <ul class="lista-estudiantes"></ul>
+
+      <form class="formulario-estudiante">
+        <label>🧒 Nombre completo</label>
+        <input type="text" class="input-nombre-estudiante" placeholder="Nombre completo">
+
+        <label>🎒 Edad o grado</label>
+        <input type="text" class="input-edad-estudiante" placeholder="Ej: 8 años o 3° primaria">
+
+        <label>📍 Barrio o dirección</label>
+        <input type="text" class="input-direccion-estudiante" placeholder="Barrio o dirección">
+
+        <label>👪 Nombre del acudiente</label>
+        <input type="text" class="input-acudiente-estudiante" placeholder="Nombre del acudiente">
+
+        <p class="mensaje-error-estudiante"></p>
+
+        <button type="submit">➕ Agregar estudiante</button>
+      </form>
+    </div>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
