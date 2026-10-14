@@ -11,7 +11,7 @@
 
   <header class="encabezado">
     <h1>🚌 Rutas Seguras Kids</h1>
-    <p>Un pequeño sistema para organizar las rutas del bus escolar y saber qué niños va en cada una.</p>
+    <p>Aplicación académica para organizar rutas escolares y consultar los estudiantes asignados a cada una.</p>
     <p id="fecha-actual" class="fecha-actual"></p>
   </header>
 
@@ -70,11 +70,11 @@
         <!-- Aquí se insertan dinámicamente las tarjetas <route-card> -->
       </div>
 
-      <p id="mensaje-sin-resultados" class="texto-vacio oculto">No encontré ninguna ruta con ese nombre o ciudad 🤔</p>
+      <p id="mensaje-sin-resultados" class="texto-vacio oculto">No hay rutas que coincidan con la búsqueda.</p>
     </section>
 
     <!-- ===================================================== -->
-    <!-- Adiccion Quiz: filtro de estudiantes por ruta            -->
+    <!-- Filtro de estudiantes por ruta                            -->
     <!-- ===================================================== -->
     <section class="seccion-estudiantes" id="seccion-estudiantes">
       <h2>👦👧 Estudiantes por ruta</h2>
@@ -95,7 +95,7 @@
   </main>
 
   <footer>
-    <p>Hecho a Pura Cabeza por <strong>Megamente Y Lopera</strong> - Proyecto académico de desarrollo web</p>
+    <p>Proyecto académico de gestión de rutas escolares: Rutas Seguras Kids.</p>
   </footer>
 
   <!-- ===================================================== -->
@@ -274,17 +274,17 @@
       <ul class="lista-estudiantes"></ul>
 
       <form class="formulario-estudiante">
-        <label>🧒 Nombre completo</label>
-        <input type="text" class="input-nombre-estudiante" placeholder="Nombre completo">
+        <label for="nombre-estudiante">🧒 Nombre completo</label>
+        <input id="nombre-estudiante" type="text" class="input-nombre-estudiante" placeholder="Nombre completo">
 
-        <label>🎒 Edad o grado</label>
-        <input type="text" class="input-edad-estudiante" placeholder="Ej: 8 años o 3° primaria">
+        <label for="edad-estudiante">🎒 Edad o grado</label>
+        <input id="edad-estudiante" type="text" class="input-edad-estudiante" placeholder="Ej: 8 años o 3° primaria">
 
-        <label>📍 Barrio o dirección</label>
-        <input type="text" class="input-direccion-estudiante" placeholder="Barrio o dirección">
+        <label for="direccion-estudiante">📍 Barrio o dirección</label>
+        <input id="direccion-estudiante" type="text" class="input-direccion-estudiante" placeholder="Barrio o dirección">
 
-        <label>👪 Nombre del acudiente</label>
-        <input type="text" class="input-acudiente-estudiante" placeholder="Nombre del acudiente">
+        <label for="acudiente-estudiante">👪 Nombre del acudiente</label>
+        <input id="acudiente-estudiante" type="text" class="input-acudiente-estudiante" placeholder="Nombre del acudiente">
 
         <p class="mensaje-error-estudiante"></p>
 

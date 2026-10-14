@@ -3,15 +3,12 @@
 // Proyecto académico hecho con HTML, CSS y JavaScript puro
 // =========================================================
 
-// Ciudades disponibles para consultar el clima con OpenWeather.
+// Ciudades disponibles para consultar el clima con Open-Meteo.
 const ciudades = {
   bucaramanga: { nombre: "Bucaramanga", latitud: 7.1193, longitud: -73.1227 },
   piedecuesta: { nombre: "Piedecuesta", latitud: 6.9879, longitud: -73.0497 },
   floridablanca: { nombre: "Floridablanca", latitud: 7.0622, longitud: -73.0864 }
 };
-
-// API key de OpenWeather (https://openweathermap.org/api)
-const CLAVE_API_OPENWEATHER = "ba56f6e90ecb6adfb2299f9a0f26e989";
 
 // Clave que usamos para guardar los datos en localStorage
 const CLAVE_STORAGE = "rutasSegurasKids";
@@ -28,6 +25,16 @@ const CAMPOS_ESTUDIANTE = [
 // Convierte el texto a minúsculas y quita espacios de más
 function normalizarCiudad(texto) {
   return texto.trim().toLowerCase();
+}
+
+function escaparHTML(valor) {
+  return String(valor ?? "").replace(/[&<>"']/g, (caracter) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[caracter]);
 }
 
 // Arreglo principal que guarda todas las rutas en memoria
@@ -108,12 +115,12 @@ class RouteCard extends HTMLElement {
         (estudiante) => `
       <li class="estudiante">
         <div class="datos-estudiante">
-          <strong>${estudiante.nombre}</strong> - ${estudiante.edadGrado}<br>
-          <small>${estudiante.direccion} | Acudiente: ${estudiante.acudiente}</small>
+          <strong>${escaparHTML(estudiante.nombre)}</strong> - ${escaparHTML(estudiante.edadGrado)}<br>
+          <small>${escaparHTML(estudiante.direccion)} | Acudiente: ${escaparHTML(estudiante.acudiente)}</small>
         </div>
         <div class="botones-estudiante">
-          <button type="button" class="boton-editar-estudiante" data-id="${estudiante.id}">Editar</button>
-          <button type="button" class="boton-eliminar-estudiante" data-id="${estudiante.id}">Eliminar</button>
+            <button type="button" class="boton-editar-estudiante" data-id="${escaparHTML(estudiante.id)}">Editar</button>
+            <button type="button" class="boton-eliminar-estudiante" data-id="${escaparHTML(estudiante.id)}">Eliminar</button>
         </div>
       </li>`
       )
@@ -224,76 +231,75 @@ function cargarRutas() {
   if (!datosGuardados) guardarRutas();
 }
 
-// Datos de ejemplo que se usan la primera vez o al restablecer.
-// Se ampliaron a 3 rutas y 6 estudiantes para el filtro (ver "Adiccion Quiz").
+// Datos ficticios para demostrar las funciones del sistema.
 function obtenerDatosIniciales() {
   return [
     {
       id: "ruta-norte",
       nombre: "Ruta Norte",
-      conductor: "Carlos Gómez",
+      conductor: "Conductor de prueba",
       hora: "6:30 AM",
       ciudad: "Bucaramanga",
       estudiantes: [
         {
           id: "estudiante-1",
-          nombre: "Juan Pérez",
+          nombre: "Estudiante de prueba 1",
           edadGrado: "8 años",
-          direccion: "Barrio El Prado",
-          acudiente: "María Pérez"
+          direccion: "Sector norte de prueba",
+          acudiente: "Acudiente de prueba 1"
         },
         {
           id: "estudiante-2",
-          nombre: "Valentina Ríos",
+          nombre: "Estudiante de prueba 2",
           edadGrado: "3° primaria",
-          direccion: "Barrio Cabecera",
-          acudiente: "Jorge Ríos"
+          direccion: "Sector norte de prueba",
+          acudiente: "Acudiente de prueba 2"
         }
       ]
     },
     {
       id: "ruta-sur",
       nombre: "Ruta Sur",
-      conductor: "Ana Torres",
+      conductor: "Conductor de prueba",
       hora: "6:45 AM",
       ciudad: "Floridablanca",
       estudiantes: [
         {
           id: "estudiante-3",
-          nombre: "Samuel Ortiz",
+          nombre: "Estudiante de prueba 3",
           edadGrado: "9 años",
-          direccion: "Barrio Caldas",
-          acudiente: "Luisa Ortiz"
+          direccion: "Sector sur de prueba",
+          acudiente: "Acudiente de prueba 3"
         },
         {
           id: "estudiante-4",
-          nombre: "Camila Suárez",
+          nombre: "Estudiante de prueba 4",
           edadGrado: "4° primaria",
-          direccion: "Barrio Lagos",
-          acudiente: "Pedro Suárez"
+          direccion: "Sector sur de prueba",
+          acudiente: "Acudiente de prueba 4"
         }
       ]
     },
     {
       id: "ruta-centro",
       nombre: "Ruta Centro",
-      conductor: "Luis Martínez",
+      conductor: "Conductor de prueba",
       hora: "7:00 AM",
       ciudad: "Piedecuesta",
       estudiantes: [
         {
           id: "estudiante-5",
-          nombre: "Estudiante Ejemplo",
+          nombre: "Estudiante de prueba 5",
           edadGrado: "8 años",
-          direccion: "Barrio San Francisco",
-          acudiente: "Diana Gómez"
+          direccion: "Sector centro de prueba",
+          acudiente: "Acudiente de prueba 5"
         },
         {
           id: "estudiante-6",
-          nombre: "Mateo Gómez",
+          nombre: "Estudiante de prueba 6",
           edadGrado: "2° primaria",
-          direccion: "Barrio Centro",
-          acudiente: "Sandra Gómez"
+          direccion: "Sector centro de prueba",
+          acudiente: "Acudiente de prueba 6"
         }
       ]
     }
@@ -310,7 +316,7 @@ function persistirCambios(mensaje) {
 }
 
 // =========================================================
-// FUNCIÓN DEL CLIMA (API de OpenWeather, requiere API key)
+// FUNCIÓN DEL CLIMA (Open-Meteo no requiere una clave de API)
 // =========================================================
 
 // Consulta el clima actual de una ciudad usando fetch y async/await
@@ -319,12 +325,20 @@ async function obtenerClima(ciudad) {
   if (!coordenadas) return "No hay coordenadas disponibles para esta ciudad";
 
   try {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${coordenadas.latitud}&lon=${coordenadas.longitud}&appid=${CLAVE_API_OPENWEATHER}&units=metric&lang=es`;
-    const respuesta = await fetch(url);
+    const parametros = new URLSearchParams({
+      latitude: String(coordenadas.latitud),
+      longitude: String(coordenadas.longitud),
+      current: "temperature_2m",
+      timezone: "America/Bogota"
+    });
+    const respuesta = await fetch(`https://api.open-meteo.com/v1/forecast?${parametros}`);
     if (!respuesta.ok) throw new Error("La respuesta del servidor no fue válida");
 
     const datos = await respuesta.json();
-    return `Clima en ${coordenadas.nombre}: ${datos.main.temp}°C`;
+    const temperatura = datos.current?.temperature_2m;
+    if (typeof temperatura !== "number") throw new Error("La respuesta no incluye temperatura");
+
+    return `Clima en ${coordenadas.nombre}: ${temperatura}°C`;
   } catch (error) {
     return "No se pudo consultar el clima";
   }
@@ -378,7 +392,7 @@ function mostrarFechaActual() {
 function renderizarRutas() {
   aplicarFiltro();
   actualizarResumen();
-  mostrarEstudiantesFiltrados(); // función definida en la sección "Adiccion Quiz" al final
+  mostrarEstudiantesFiltrados(); // función definida en la sección del filtro de estudiantes
 }
 
 inputBuscador.addEventListener("input", aplicarFiltro);
@@ -517,8 +531,7 @@ contenedorRutas.addEventListener("student-edit", (evento) => {
 });
 
 // =========================================================
-// Adiccion Quiz
-// Todo lo nuevo para el filtro de estudiantes por ruta
+// Filtro de estudiantes por ruta
 // =========================================================
 
 const selectFiltroRuta = document.getElementById("select-filtro-ruta");
@@ -565,8 +578,8 @@ function mostrarEstudiantesFiltrados() {
     const item = document.createElement("li");
     item.className = "item-estudiante-filtrado";
     item.innerHTML = `
-      <span>${estudiante.nombre}</span>
-      <span class="etiqueta-ruta ${claseColor}">${estudiante.ruta}</span>
+      <span>${escaparHTML(estudiante.nombre)}</span>
+      <span class="etiqueta-ruta ${claseColor}">${escaparHTML(estudiante.ruta)}</span>
     `;
     listaEstudiantesFiltrados.appendChild(item);
   });
